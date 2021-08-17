@@ -11,6 +11,7 @@ type PaginationFilter struct {
 
 	Page    int `json:"page"`
 	PerPage int `json:"perPage"`
+	IgnorePerPage bool `json:"ignorePerPage"`
 }
 
 func NewPaginationFilter() *PaginationFilter {
@@ -20,12 +21,10 @@ func NewPaginationFilter() *PaginationFilter {
 	}
 }
 
-// implement repository.Filter interface
 func (f *PaginationFilter) GetLimit() int {
 	return f.GetPerPage() + 1
 }
 
-// implement repository.Filter interface
 func (f *PaginationFilter) GetOffset() int {
 	return (f.GetPage() - 1) * f.GetPerPage()
 }
@@ -38,7 +37,7 @@ func (f *PaginationFilter) GetPage() int {
 }
 
 func (f *PaginationFilter) GetPerPage() int {
-	if f.PerPage < 1 || f.PerPage > maxPerPage {
+	if f.PerPage < 1 || (f.PerPage > maxPerPage && !f.IgnorePerPage) {
 		return defaultPerPage
 	}
 
