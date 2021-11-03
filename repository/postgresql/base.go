@@ -3,9 +3,6 @@ package postgresql
 import (
 	"context"
 	"fmt"
-	nrcontext "github.com/best-expendables-v2/newrelic-context"
-	"github.com/fatih/structs"
-	"gorm.io/gorm/schema"
 	"reflect"
 	"strings"
 
@@ -13,7 +10,10 @@ import (
 	"github.com/best-expendables-v2/common-utils/repository"
 	"github.com/best-expendables-v2/common-utils/repository/filter"
 	"github.com/best-expendables-v2/common-utils/transaction"
+	nrcontext "github.com/best-expendables-v2/newrelic-context"
+	"github.com/fatih/structs"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 type BaseRepo struct {
@@ -72,8 +72,8 @@ func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter,
 		q = q.Where(query, val...)
 	}
 
-	for query, val := range f.GetJoins() {
-		q = q.Joins(query, val...)
+	for _, join := range f.GetJoins() {
+		q = q.Joins(join.Query, join.Args...)
 	}
 
 	if f.GetGroups() != "" {

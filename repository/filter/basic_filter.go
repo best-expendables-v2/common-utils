@@ -11,8 +11,11 @@ type BasicFilter struct {
 
 func NewBasicFilter() *BasicFilter {
 	return &BasicFilter{
-		where:  Where{},
-		joins:  Joins{},
+		where: Where{},
+		joins: Joins{
+			Queries: []string{},
+			Conds:   make(map[string]Join),
+		},
 		keys:   Keys{},
 		groups: Groups{},
 	}
@@ -34,8 +37,12 @@ func (f *BasicFilter) GetWhere() Where {
 }
 
 // GetJoins implement repository.Filter interface
-func (f *BasicFilter) GetJoins() Joins {
-	return f.joins
+func (f *BasicFilter) GetJoins() []Join {
+	joins := []Join{}
+	for _, join := range f.joins.Queries {
+		joins = append(joins, f.joins.Conds[join])
+	}
+	return joins
 }
 
 func (f *BasicFilter) AddWhere(key string, query string, values ...interface{}) *BasicFilter {
@@ -45,7 +52,12 @@ func (f *BasicFilter) AddWhere(key string, query string, values ...interface{}) 
 }
 
 func (f *BasicFilter) AddJoin(join string, values ...interface{}) *BasicFilter {
-	f.joins[join] = values
+	_, exist := f.joins.Conds[join]
+	if !exist {
+		f.joins.Queries = append(f.joins.Queries, join)
+	}
+
+	f.joins.Conds[join] = Join{Query: join, Args: values}
 	return f
 }
 
