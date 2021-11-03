@@ -6,12 +6,19 @@ const (
 )
 
 type Where map[string][]interface{}
-type Joins map[string][]interface{}
+type Joins struct {
+	Queries []string
+	Conds   map[string]Join
+}
+type Join struct {
+	Query string
+	Args  []interface{}
+}
 type Keys map[string]bool
 type Groups map[string]bool
 type Filter interface {
 	GetWhere() Where
-	GetJoins() Joins
+	GetJoins() []Join
 	GetLimit() int
 	GetOffset() int
 	GetOrderBy() []string
