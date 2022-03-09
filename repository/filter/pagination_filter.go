@@ -9,8 +9,8 @@ type PaginationFilter struct {
 	BasicFilter
 	BasicOrder
 
-	Page    int `json:"page"`
-	PerPage int `json:"perPage"`
+	Page          int  `json:"page"`
+	PerPage       int  `json:"perPage"`
 	IgnorePerPage bool `json:"ignorePerPage"`
 }
 
