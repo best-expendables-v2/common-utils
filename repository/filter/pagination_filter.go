@@ -22,7 +22,7 @@ func NewPaginationFilter() *PaginationFilter {
 }
 
 func (f *PaginationFilter) GetLimit() int {
-	return f.GetPerPage() + 1
+	return f.GetPerPage()
 }
 
 func (f *PaginationFilter) GetOffset() int {
