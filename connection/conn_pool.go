@@ -82,6 +82,6 @@ func (s *ConnPool) Rollback() error {
 	return nil
 }
 
-func (s *ConnPool) Ping() error {
-	return nil
+func (s *ConnPool) GetDBConn() (*sql.DB, error) {
+	return s.pluginRetry.sqlDB, nil
 }
