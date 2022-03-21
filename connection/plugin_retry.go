@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"database/sql"
 	"github.com/best-expendables-v2/logger"
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
@@ -28,6 +29,7 @@ type PluginRetry interface {
 
 type pluginRetry struct {
 	*gorm.DB
+	sqlDB         *sql.DB
 	ConnPool      *ConnPool
 	retryConfig   RetryConfig
 	retryMessages []retryMessage
@@ -43,6 +45,9 @@ func (s pluginRetry) Name() string {
 
 func (s pluginRetry) Initialize(db *gorm.DB) error {
 	s.DB = db
+	if err := s.registerSqlDB(db); err != nil {
+		return err
+	}
 	s.registerConnPool(db)
 	s.retryConfig = s.loadConfig()
 	s.retryMessages = s.getRetryConfig(s.retryConfig)
@@ -64,6 +69,15 @@ func (s *pluginRetry) registerConnPool(db *gorm.DB) {
 	s.ConnPool = &ConnPool{ConnPool: basePool, pluginRetry: s}
 	db.ConnPool = s.ConnPool
 	db.Statement.ConnPool = s.ConnPool
+}
+
+func (s *pluginRetry) registerSqlDB(db *gorm.DB) error {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+	s.sqlDB = sqlDB
+	return nil
 }
 
 func (s pluginRetry) getRetryConfig(conf RetryConfig) []retryMessage {

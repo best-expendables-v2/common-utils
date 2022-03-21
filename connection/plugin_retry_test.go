@@ -33,9 +33,9 @@ const (
 
 func TestDbWithRetryTestSuite(s *testing.T) {
 	_ = os.Setenv("GORM_RETRY_ATTEMPT", "3")
-	_ = os.Setenv("GORM_RETRY_DELAY", "2s")
+	_ = os.Setenv("GORM_RETRY_DELAY", "1s")
 	suite.Run(s, new(DbRetryWithoutTransactionTestSuite))
-	suite.Run(s, new(DbRetryWithTransactionTestSuite))
+	//suite.Run(s, new(DbRetryWithTransactionTestSuite))
 }
 
 func (s *MainTestSuite) SetupSuite() {
@@ -59,6 +59,14 @@ func (s *MainTestSuite) SetupSuite() {
 		s.T().Errorf("Cannot register plugin: %v", err)
 	}
 	s.DB = db
+	s.RawDB, err = db.DB()
+	if err != nil {
+		s.T().Error(err)
+	}
+	err = s.RawDB.Ping()
+	if err != nil {
+		s.T().Error(err)
+	}
 }
 
 func (s *DbRetryWithoutTransactionTestSuite) TestDbRetryWithoutTransaction() {
