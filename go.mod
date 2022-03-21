@@ -3,6 +3,7 @@ module github.com/best-expendables-v2/common-utils
 go 1.15
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/best-expendables-v2/logger v0.0.0-20210531153023-31ac18ea84d2
 	github.com/best-expendables-v2/newrelic-context v0.0.0-20210531153227-aaf24a1659cb
 	github.com/best-expendables-v2/user-service-client v0.0.0-20210531152935-8a9617716e79
@@ -13,6 +14,8 @@ require (
 	github.com/go-redis/redis/v8 v8.3.1
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gorilla/schema v1.2.0
+	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
