@@ -6,9 +6,9 @@ const (
 )
 
 type PaginationFilter struct {
-	BasicFilter
-	BasicOrder
-
+	BasicFilter   `json:"basicFilter"`
+	BasicOrder    `json:"basicOrder"`
+	CheckNextPage bool `json:"checkNextPage"`
 	Page          int  `json:"page"`
 	PerPage       int  `json:"perPage"`
 	IgnorePerPage bool `json:"ignorePerPage"`
@@ -22,7 +22,10 @@ func NewPaginationFilter() *PaginationFilter {
 }
 
 func (f *PaginationFilter) GetLimit() int {
-	return f.GetPerPage() + 1
+	if f.CheckNextPage {
+		return f.GetPerPage() + 1
+	}
+	return f.GetPerPage()
 }
 
 func (f *PaginationFilter) GetOffset() int {
