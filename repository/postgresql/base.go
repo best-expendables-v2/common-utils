@@ -28,10 +28,6 @@ func NewBaseRepo(db *gorm.DB) *BaseRepo {
 
 func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 	db := r.db
-	if filter.GetUnscoped(ctx) {
-		db = db.Unscoped()
-	}
-
 	if tnx := transaction.GetTnx(ctx); tnx != nil {
 		db = tnx.(*gorm.DB)
 	}
@@ -41,7 +37,9 @@ func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 
 func (r *BaseRepo) FindByID(ctx context.Context, m model.Model, id string, preloadFields ...string) error {
 	q := r.GetDB(ctx)
-
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
 	for _, p := range preloadFields {
 		q = q.Preload(p)
 	}
