@@ -37,7 +37,9 @@ func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 
 func (r *BaseRepo) FindByID(ctx context.Context, m model.Model, id string, preloadFields ...string) error {
 	q := r.GetDB(ctx)
-
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
 	for _, p := range preloadFields {
 		q = q.Preload(p)
 	}
@@ -68,6 +70,9 @@ func (r *BaseRepo) Create(ctx context.Context, m model.Model) error {
 
 func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) error {
 	q := r.GetDB(ctx).Model(val)
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
 	for query, val := range f.GetWhere() {
 		q = q.Where(query, val...)
 	}
