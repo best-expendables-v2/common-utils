@@ -40,8 +40,15 @@ func (r *BaseRepo) FindByID(ctx context.Context, m model.Model, id string, prelo
 	if filter.GetUnscoped(ctx) {
 		q = q.Unscoped()
 	}
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
 	for _, p := range preloadFields {
-		q = q.Preload(p)
+		if isPreloadUnscoped {
+			q = q.Preload(p, func(db *gorm.DB) *gorm.DB {
+				return db.Unscoped()
+			})
+		} else {
+			q = q.Preload(p)
+		}
 	}
 
 	err := q.Where("id = ?", id).Take(m).Error
@@ -94,9 +101,15 @@ func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter,
 			q = q.Order(order)
 		}
 	}
-
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
 	for _, p := range preloadFields {
-		q = q.Preload(p)
+		if isPreloadUnscoped {
+			q = q.Preload(p, func(db *gorm.DB) *gorm.DB {
+				return db.Unscoped()
+			})
+		} else {
+			q = q.Preload(p)
+		}
 	}
 
 	return q.Offset(f.GetOffset()).Find(val).Error
