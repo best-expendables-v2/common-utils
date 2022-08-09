@@ -44,6 +44,8 @@ github.com/go-redis/redis/v8/internal/pool
 github.com/go-redis/redis/v8/internal/proto
 github.com/go-redis/redis/v8/internal/rand
 github.com/go-redis/redis/v8/internal/util
+# github.com/go-sql-driver/mysql v1.6.0
+github.com/go-sql-driver/mysql
 # github.com/gofrs/uuid v4.0.0+incompatible
 ## explicit
 github.com/gofrs/uuid
@@ -74,7 +76,8 @@ github.com/jackc/pgx/v4/internal/sanitize
 github.com/jackc/pgx/v4/stdlib
 # github.com/jinzhu/inflection v1.0.0
 github.com/jinzhu/inflection
-# github.com/jinzhu/now v1.1.4
+# github.com/jinzhu/now v1.1.5
+## explicit
 github.com/jinzhu/now
 # github.com/joho/godotenv v1.4.0
 ## explicit
@@ -216,10 +219,13 @@ gopkg.in/redis.v5/internal/pool
 gopkg.in/redis.v5/internal/proto
 # gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 gopkg.in/yaml.v3
+# gorm.io/driver/mysql v1.3.1
+## explicit
+gorm.io/driver/mysql
 # gorm.io/driver/postgres v1.2.3
 ## explicit
 gorm.io/driver/postgres
-# gorm.io/gorm v1.22.5
+# gorm.io/gorm v1.23.1
 ## explicit
 gorm.io/gorm
 gorm.io/gorm/callbacks
