@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+
 	"github.com/best-expendables-v2/common-utils/repository/filter"
 
 	"github.com/best-expendables-v2/common-utils/model"
@@ -21,8 +22,21 @@ type BaseRepo interface {
 	CanCreateOrUpdate
 }
 
+type PreloadField struct {
+	FieldName  string
+	Conditions []interface{}
+}
+
+func NewPreloadField(fieldName string, conditions ...interface{}) PreloadField {
+	return PreloadField{
+		FieldName:  fieldName,
+		Conditions: conditions,
+	}
+}
+
 type Searchable interface {
 	Search(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) error
+	SearchWithPreloadCondition(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...PreloadField) error
 }
 
 type Updatable interface {
@@ -44,6 +58,7 @@ type Removable interface {
 
 type CanFindByID interface {
 	FindByID(ctx context.Context, m model.Model, id string, preloadFields ...string) error
+	FindByIDWithPreloadCondition(ctx context.Context, m model.Model, id string, preloadFields ...PreloadField) error
 }
 
 type CanCreateOrUpdate interface {

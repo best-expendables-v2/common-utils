@@ -35,6 +35,27 @@ func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 	return db
 }
 
+func (r *BaseRepo) FindByIDWithPreloadCondition(ctx context.Context, m model.Model, id string, preloadFields ...repository.PreloadField) error {
+	q := r.GetDB(ctx)
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
+	for _, p := range preloadFields {
+		if isPreloadUnscoped {
+			p.Conditions = append(p.Conditions, func(db *gorm.DB) *gorm.DB { return db.Unscoped() })
+		}
+		q = q.Preload(p.FieldName, p.Conditions...)
+	}
+
+	err := q.Where("id = ?", id).Take(m).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return repository.RecordNotFound
+	}
+	return err
+}
+
 func (r *BaseRepo) FindByID(ctx context.Context, m model.Model, id string, preloadFields ...string) error {
 	q := r.GetDB(ctx)
 	if filter.GetUnscoped(ctx) {
@@ -73,6 +94,43 @@ func (r *BaseRepo) Updates(ctx context.Context, m model.Model, params interface{
 
 func (r *BaseRepo) Create(ctx context.Context, m model.Model) error {
 	return r.GetDB(ctx).Create(m).Error
+}
+
+func (r *BaseRepo) SearchWithPreloadCondition(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...repository.PreloadField) error {
+	q := r.GetDB(ctx).Model(val)
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
+	for query, val := range f.GetWhere() {
+		q = q.Where(query, val...)
+	}
+
+	for _, join := range f.GetJoins() {
+		q = q.Joins(join.Query, join.Args...)
+	}
+
+	if f.GetGroups() != "" {
+		q = q.Group(f.GetGroups())
+	}
+
+	if f.GetLimit() > 0 {
+		q = q.Limit(f.GetLimit())
+	}
+
+	if len(f.GetOrderBy()) > 0 {
+		for _, order := range f.GetOrderBy() {
+			q = q.Order(order)
+		}
+	}
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
+	for _, p := range preloadFields {
+		if isPreloadUnscoped {
+			p.Conditions = append(p.Conditions, func(db *gorm.DB) *gorm.DB { return db.Unscoped() })
+		}
+		q = q.Preload(p.FieldName, p.Conditions...)
+	}
+
+	return q.Offset(f.GetOffset()).Find(val).Error
 }
 
 func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) error {
