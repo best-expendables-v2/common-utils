@@ -21,22 +21,18 @@ func NewBasicFilter() *BasicFilter {
 	}
 }
 
-// implement repository.Filter interface
 func (f *BasicFilter) GetLimit() int {
 	return IgnoreLimit
 }
 
-// implement repository.Filter interface
 func (f *BasicFilter) GetOffset() int {
 	return IgnoreOffset
 }
 
-// implement repository.Filter interface
 func (f *BasicFilter) GetWhere() Where {
 	return f.where
 }
 
-// GetJoins implement repository.Filter interface
 func (f *BasicFilter) GetJoins() []Join {
 	joins := []Join{}
 	for _, join := range f.joins.Queries {
