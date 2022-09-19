@@ -43,6 +43,5 @@ func (f *PaginationFilter) GetPerPage() int {
 	if f.PerPage < 1 || (f.PerPage > maxPerPage && !f.IgnorePerPage) {
 		return defaultPerPage
 	}
-
 	return f.PerPage
 }
