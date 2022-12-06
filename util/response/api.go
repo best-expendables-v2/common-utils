@@ -10,10 +10,20 @@ import (
 )
 
 type ApiResponse struct {
-	Code    int               `json:"-"`
-	Data    interface{}       `json:"data,omitempty"`
-	Headers map[string]string `json:"-"`
-	Errors  interface{}       `json:"errors,omitempty"`
+	Code     int               `json:"-"`
+	Data     interface{}       `json:"data,omitempty"`
+	Metadata Metadata          `json:"metadata,omitempty"`
+	Headers  map[string]string `json:"-"`
+	Errors   interface{}       `json:"errors,omitempty"`
+}
+
+func (a ApiResponse) AddMetadata(m Metadata) ApiResponse {
+	a.Metadata = m
+	return a
+}
+
+type Metadata struct {
+	Total int `json:"total,omitempty"`
 }
 
 type Error struct {
@@ -25,22 +35,34 @@ type Error struct {
 
 // Ok 200-OK with data in body
 func Ok(data interface{}) ApiResponse {
-	return ApiResponse{http.StatusOK, data, nil, nil}
+	return ApiResponse{
+		Code: http.StatusOK,
+		Data: data,
+	}
 }
 
 // Accepted 202-Accepted with data in body
 func Accepted(data interface{}) ApiResponse {
-	return ApiResponse{http.StatusAccepted, data, nil, nil}
+	return ApiResponse{
+		Code: http.StatusAccepted,
+		Data: data,
+	}
 }
 
 // Created 201-Created with data in body
 func Created(data interface{}) ApiResponse {
-	return ApiResponse{http.StatusCreated, data, nil, nil}
+	return ApiResponse{
+		Code: http.StatusCreated,
+		Data: data,
+	}
 }
 
 // PartialContent 206-Partial Content with data in body
 func PartialContent(data interface{}) ApiResponse {
-	return ApiResponse{http.StatusPartialContent, data, nil, nil}
+	return ApiResponse{
+		Code: http.StatusPartialContent,
+		Data: data,
+	}
 }
 
 // BadRequest 400-Bad Request

@@ -173,6 +173,49 @@ func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter,
 	return q.Offset(f.GetOffset()).Find(val).Error
 }
 
+func (r *BaseRepo) SearchAndCount(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) (int64, error) {
+	var count int64
+	q := r.GetDB(ctx).Model(val)
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
+	for query, val := range f.GetWhere() {
+		q = q.Where(query, val...)
+	}
+
+	for _, join := range f.GetJoins() {
+		q = q.Joins(join.Query, join.Args...)
+	}
+
+	if f.GetGroups() != "" {
+		q = q.Group(f.GetGroups())
+	}
+
+	q.Count(&count)
+
+	if f.GetLimit() > 0 {
+		q = q.Limit(f.GetLimit())
+	}
+
+	if len(f.GetOrderBy()) > 0 {
+		for _, order := range f.GetOrderBy() {
+			q = q.Order(order)
+		}
+	}
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
+	for _, p := range preloadFields {
+		if isPreloadUnscoped {
+			q = q.Preload(p, func(db *gorm.DB) *gorm.DB {
+				return db.Unscoped()
+			})
+		} else {
+			q = q.Preload(p)
+		}
+	}
+
+	return count, q.Offset(f.GetOffset()).Find(val).Error
+}
+
 func (r *BaseRepo) Save(ctx context.Context, m model.Model) error {
 	return r.GetDB(ctx).Model(m).Save(m).Error
 }
