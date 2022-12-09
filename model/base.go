@@ -35,7 +35,6 @@ func (m *BaseModel) BeforeCreate(tx *gorm.DB) error {
 	}
 
 	now := time.Now()
-	now = now.Round(time.Second)
 	if m.CreatedAt.IsZero() {
 		tx.Statement.SetColumn("CreatedAt", now)
 	}
