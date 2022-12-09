@@ -29,6 +29,6 @@ type Input struct {
 }
 
 type ShippingProvider struct {
-	Id          string `gorm:"type:uuid;primary_key" json:"id"`
-	Name        string `json:"name"`
+	Id   string `gorm:"type:uuid;primary_key" json:"id"`
+	Name string `json:"name"`
 }
