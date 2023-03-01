@@ -2,6 +2,7 @@ package mariadb
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -15,6 +16,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
+
+var _ repository.BaseRepo = (*BaseRepo)(nil)
 
 type BaseRepo struct {
 	db *gorm.DB
@@ -211,6 +214,9 @@ func (r *BaseRepo) BulkCreate(ctx context.Context, arr []model.Model) error {
 		strings.Join(valueStrings, "),("))
 
 	return r.GetDB(ctx).Exec(sql, valueArgs...).Error
+}
+func (r *BaseRepo) SearchAndCount(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) (int64, error) {
+	return 0, errors.New("not implemented")
 }
 
 func transformPropertiesToFieldNames(properties []string) []string {
