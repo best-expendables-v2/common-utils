@@ -21,7 +21,6 @@ func TestBaseRepo_Updates(t *testing.T) {
 	}
 	i := Input{Name: "test"}
 	db.Model(&s).Updates(&i)
-	baseRepo := NewBaseRepo(db)
 }
 
 type Input struct {
