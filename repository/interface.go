@@ -21,6 +21,7 @@ type BaseRepo interface {
 	Removable
 	CanFindByID
 	CanCreateOrUpdate
+	CanConfigure
 }
 
 type PreloadField struct {
