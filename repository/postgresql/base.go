@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"gorm.io/gorm/clause"
 	"reflect"
 	"strings"
 
@@ -34,7 +35,13 @@ func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 		db = tnx.(*gorm.DB)
 	}
 	db = nrcontext.SetTxnToGorm(ctx, db)
+	db.Clauses()
 	return db
+}
+
+func (r *BaseRepo) SetDBClause(conds ...clause.Expression) *BaseRepo {
+	r.db = r.db.Clauses(conds...)
+	return r
 }
 
 func (r *BaseRepo) FindByIDWithPreloadCondition(ctx context.Context, m model.Model, id string, preloadFields ...repository.PreloadField) error {

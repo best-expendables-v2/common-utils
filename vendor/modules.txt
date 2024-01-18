@@ -223,13 +223,13 @@ gopkg.in/redis.v5/internal/pool
 gopkg.in/redis.v5/internal/proto
 # gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 gopkg.in/yaml.v3
-# gorm.io/driver/mysql v1.3.5
+# gorm.io/driver/mysql v1.4.3
 ## explicit
 gorm.io/driver/mysql
 # gorm.io/driver/postgres v1.3.8
 ## explicit
 gorm.io/driver/postgres
-# gorm.io/gorm v1.23.8
+# gorm.io/gorm v1.25.2
 ## explicit
 gorm.io/gorm
 gorm.io/gorm/callbacks
@@ -238,6 +238,9 @@ gorm.io/gorm/logger
 gorm.io/gorm/migrator
 gorm.io/gorm/schema
 gorm.io/gorm/utils
+# gorm.io/plugin/dbresolver v1.5.0
+## explicit
+gorm.io/plugin/dbresolver
 # moul.io/http2curl v1.0.0
 ## explicit
 moul.io/http2curl
