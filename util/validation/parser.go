@@ -24,7 +24,7 @@ var messageTmpls = map[string]interface{}{
 		"array":   "The %s field must have at least %s items.",
 	},
 	"max": map[string]string{
-		"numeric": "The %s field must bot be greater than %s.",
+		"numeric": "The %s field must not be greater than %s.",
 		"string":  "The %s field must not be greater than %s characters.",
 		"array":   "The %s field must not have more than %s items.",
 	},

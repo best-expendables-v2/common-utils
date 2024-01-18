@@ -16,6 +16,8 @@ import (
 	"gorm.io/gorm/schema"
 )
 
+var _ repository.BaseRepo = (*BaseRepo)(nil)
+
 type BaseRepo struct {
 	db *gorm.DB
 }
