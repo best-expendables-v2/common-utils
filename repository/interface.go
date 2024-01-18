@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"errors"
-	"gorm.io/gorm/clause"
 
 	"github.com/best-expendables-v2/common-utils/repository/filter"
 
@@ -21,7 +20,6 @@ type BaseRepo interface {
 	Removable
 	CanFindByID
 	CanCreateOrUpdate
-	CanConfigure
 }
 
 type PreloadField struct {
@@ -66,8 +64,4 @@ type CanFindByID interface {
 
 type CanCreateOrUpdate interface {
 	CreateOrUpdate(ctx context.Context, m model.Model, query interface{}, attrs ...interface{}) error
-}
-
-type CanConfigure interface {
-	SetDBClause(conds ...clause.Expression) *BaseRepo
 }

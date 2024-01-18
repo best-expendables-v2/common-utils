@@ -3,7 +3,7 @@ package postgresql
 import (
 	"context"
 	"fmt"
-	"gorm.io/gorm/clause"
+	"gorm.io/plugin/dbresolver"
 	"reflect"
 	"strings"
 
@@ -16,6 +16,19 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
+
+var isDBResolverRead = "is_db_resolver_read"
+
+func SetDBResolverRead(ctx context.Context) context.Context {
+	return context.WithValue(ctx, isDBResolverRead, true)
+}
+
+func GetDBResolverRead(ctx context.Context) bool {
+	if v := ctx.Value(isDBResolverRead); v != nil {
+		return v.(bool)
+	}
+	return false
+}
 
 var _ repository.BaseRepo = (*BaseRepo)(nil)
 
@@ -31,17 +44,15 @@ func NewBaseRepo(db *gorm.DB) *BaseRepo {
 
 func (r *BaseRepo) GetDB(ctx context.Context) *gorm.DB {
 	db := r.db
+	if GetDBResolverRead(ctx) {
+		db = db.Clauses(dbresolver.Read)
+	}
 	if tnx := transaction.GetTnx(ctx); tnx != nil {
 		db = tnx.(*gorm.DB)
 	}
 	db = nrcontext.SetTxnToGorm(ctx, db)
 	db.Clauses()
 	return db
-}
-
-func (r *BaseRepo) SetDBClause(conds ...clause.Expression) *BaseRepo {
-	r.db = r.db.Clauses(conds...)
-	return r
 }
 
 func (r *BaseRepo) FindByIDWithPreloadCondition(ctx context.Context, m model.Model, id string, preloadFields ...repository.PreloadField) error {
