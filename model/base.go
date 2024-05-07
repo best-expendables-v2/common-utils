@@ -46,7 +46,6 @@ func (m *BaseModel) BeforeCreate(tx *gorm.DB) error {
 
 func (m *BaseModel) BeforeUpdate(tx *gorm.DB) error {
 	now := time.Now()
-	now = now.Round(time.Second)
 	tx.Statement.SetColumn("UpdatedAt", now)
 	return nil
 }
