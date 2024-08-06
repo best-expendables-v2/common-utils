@@ -24,4 +24,5 @@ type Filter interface {
 	GetOrderBy() []string
 	GetKeys() Keys
 	GetGroups() string
+	GetPage() int
 }
