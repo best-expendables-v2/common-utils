@@ -3,10 +3,11 @@ package filter
 import "strings"
 
 type BasicFilter struct {
-	where  Where
-	joins  Joins
-	keys   map[string]bool
-	groups Groups
+	where   Where
+	joins   Joins
+	keys    map[string]bool
+	groups  Groups
+	orWhere OrWhere
 }
 
 func NewBasicFilter() *BasicFilter {
@@ -33,6 +34,10 @@ func (f *BasicFilter) GetWhere() Where {
 	return f.where
 }
 
+func (f *BasicFilter) GetOrWhere() OrWhere {
+	return f.orWhere
+}
+
 func (f *BasicFilter) GetJoins() []Join {
 	joins := []Join{}
 	for _, join := range f.joins.Queries {
@@ -42,6 +47,12 @@ func (f *BasicFilter) GetJoins() []Join {
 }
 
 func (f *BasicFilter) AddWhere(key string, query string, values ...interface{}) *BasicFilter {
+	f.where[query] = values
+	f.keys[key] = true
+	return f
+}
+
+func (f *BasicFilter) AddOrWhere(key string, query string, values ...interface{}) *BasicFilter {
 	f.where[query] = values
 	f.keys[key] = true
 	return f
