@@ -107,6 +107,10 @@ func (r *BaseRepo) SearchWithPreloadCondition(ctx context.Context, val interface
 		q = q.Where(query, val...)
 	}
 
+	for query, val := range f.GetOrWhere() {
+		q = q.Or(query, val...)
+	}
+
 	for _, join := range f.GetJoins() {
 		q = q.Joins(join.Query, join.Args...)
 	}
@@ -142,6 +146,10 @@ func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter,
 	}
 	for query, val := range f.GetWhere() {
 		q = q.Where(query, val...)
+	}
+
+	for query, val := range f.GetOrWhere() {
+		q = q.Or(query, val...)
 	}
 
 	for _, join := range f.GetJoins() {
@@ -183,6 +191,10 @@ func (r *BaseRepo) SearchAndCount(ctx context.Context, val interface{}, f filter
 	}
 	for query, val := range f.GetWhere() {
 		q = q.Where(query, val...)
+	}
+
+	for query, val := range f.GetOrWhere() {
+		q = q.Or(query, val...)
 	}
 
 	for _, join := range f.GetJoins() {
@@ -317,4 +329,41 @@ func toSearchableMap(attrs ...interface{}) (result interface{}) {
 		}
 	}
 	return
+}
+
+func (r *BaseRepo) SearchWithPreloadConditionAndCount(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...repository.PreloadField) (int64, error) {
+	var count int64
+	q := r.GetDB(ctx).Model(val)
+	if filter.GetUnscoped(ctx) {
+		q = q.Unscoped()
+	}
+	for query, args := range f.GetWhere() {
+		q = q.Where(query, args...)
+	}
+	for query, args := range f.GetOrWhere() {
+		q = q.Or(query, args...)
+	}
+	for _, join := range f.GetJoins() {
+		q = q.Joins(join.Query, join.Args...)
+	}
+	if f.GetGroups() != "" {
+		q = q.Group(f.GetGroups())
+	}
+	q.Count(&count)
+	if f.GetLimit() > 0 {
+		q = q.Limit(f.GetLimit())
+	}
+	if len(f.GetOrderBy()) > 0 {
+		for _, order := range f.GetOrderBy() {
+			q = q.Order(order)
+		}
+	}
+	isPreloadUnscoped := filter.GetPreloadUnscoped(ctx)
+	for _, p := range preloadFields {
+		if isPreloadUnscoped {
+			p.Conditions = append(p.Conditions, func(db *gorm.DB) *gorm.DB { return db.Unscoped() })
+		}
+		q = q.Preload(p.FieldName, p.Conditions...)
+	}
+	return count, q.Offset(f.GetOffset()).Find(val).Error
 }

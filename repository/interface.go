@@ -38,6 +38,7 @@ type Searchable interface {
 	Search(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) error
 	SearchWithPreloadCondition(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...PreloadField) error
 	SearchAndCount(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...string) (int64, error)
+	SearchWithPreloadConditionAndCount(ctx context.Context, val interface{}, f filter.Filter, preloadFields ...PreloadField) (int64, error)
 }
 
 type Updatable interface {

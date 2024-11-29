@@ -18,6 +18,7 @@ type Keys map[string]bool
 type Groups map[string]bool
 type Filter interface {
 	GetWhere() Where
+	GetOrWhere() Where
 	GetJoins() []Join
 	GetLimit() int
 	GetOffset() int
