@@ -4,22 +4,22 @@ import "strings"
 
 type BasicFilter struct {
 	where   Where
+	orWhere Where
 	joins   Joins
 	keys    map[string]bool
 	groups  Groups
-	orWhere OrWhere
 }
 
 func NewBasicFilter() *BasicFilter {
 	return &BasicFilter{
-		where: Where{},
+		where:   Where{},
+		orWhere: Where{},
 		joins: Joins{
 			Queries: []string{},
 			Conds:   make(map[string]Join),
 		},
-		keys:    Keys{},
-		groups:  Groups{},
-		orWhere: OrWhere{},
+		keys:   Keys{},
+		groups: Groups{},
 	}
 }
 
@@ -35,7 +35,7 @@ func (f *BasicFilter) GetWhere() Where {
 	return f.where
 }
 
-func (f *BasicFilter) GetOrWhere() OrWhere {
+func (f *BasicFilter) GetOrWhere() Where {
 	return f.orWhere
 }
 
@@ -54,7 +54,7 @@ func (f *BasicFilter) AddWhere(key string, query string, values ...interface{}) 
 }
 
 func (f *BasicFilter) AddOrWhere(key string, query string, values ...interface{}) *BasicFilter {
-	f.where[query] = values
+	f.orWhere[query] = values
 	f.keys[key] = true
 	return f
 }

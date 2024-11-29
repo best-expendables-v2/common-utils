@@ -6,7 +6,6 @@ const (
 )
 
 type Where map[string][]interface{}
-type OrWhere map[string][]interface{}
 type Joins struct {
 	Queries []string
 	Conds   map[string]Join
@@ -19,11 +18,11 @@ type Keys map[string]bool
 type Groups map[string]bool
 type Filter interface {
 	GetWhere() Where
+	GetOrWhere() Where
 	GetJoins() []Join
 	GetLimit() int
 	GetOffset() int
 	GetOrderBy() []string
 	GetKeys() Keys
 	GetGroups() string
-	GetOrWhere() OrWhere
 }
