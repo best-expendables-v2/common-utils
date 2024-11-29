@@ -25,5 +25,5 @@ type Filter interface {
 	GetOrderBy() []string
 	GetKeys() Keys
 	GetGroups() string
-	GetOrWhere() Where
+	GetOrWhere() OrWhere
 }
