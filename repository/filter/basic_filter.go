@@ -17,8 +17,9 @@ func NewBasicFilter() *BasicFilter {
 			Queries: []string{},
 			Conds:   make(map[string]Join),
 		},
-		keys:   Keys{},
-		groups: Groups{},
+		keys:    Keys{},
+		groups:  Groups{},
+		orWhere: OrWhere{},
 	}
 }
 
