@@ -3,17 +3,19 @@ package filter
 import "strings"
 
 type BasicFilter struct {
-	where   Where
-	orWhere Where
-	joins   Joins
-	keys    map[string]bool
-	groups  Groups
+	where        Where
+	orWhere      Where
+	orWhereGroup Where
+	joins        Joins
+	keys         map[string]bool
+	groups       Groups
 }
 
 func NewBasicFilter() *BasicFilter {
 	return &BasicFilter{
-		where:   Where{},
-		orWhere: Where{},
+		where:        Where{},
+		orWhere:      Where{},
+		orWhereGroup: Where{},
 		joins: Joins{
 			Queries: []string{},
 			Conds:   make(map[string]Join),
@@ -39,6 +41,10 @@ func (f *BasicFilter) GetOrWhere() Where {
 	return f.orWhere
 }
 
+func (f *BasicFilter) GetOrWhereGroup() Where {
+	return f.orWhereGroup
+}
+
 func (f *BasicFilter) GetJoins() []Join {
 	joins := []Join{}
 	for _, join := range f.joins.Queries {
@@ -55,7 +61,13 @@ func (f *BasicFilter) AddWhere(key string, query string, values ...interface{}) 
 
 func (f *BasicFilter) AddOrWhere(key string, query string, values ...interface{}) *BasicFilter {
 	f.orWhere[query] = values
-	f.keys[key] = true
+	f.keys["or_where_"+key] = true
+	return f
+}
+
+func (f *BasicFilter) AddOrWhereGroup(key string, query string, values ...interface{}) *BasicFilter {
+	f.orWhereGroup[query] = values
+	f.keys["or_where_group_"+key] = true
 	return f
 }
 

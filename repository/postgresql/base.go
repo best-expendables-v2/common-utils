@@ -110,6 +110,13 @@ func (r *BaseRepo) SearchWithPreloadCondition(ctx context.Context, val interface
 	for query, val := range f.GetOrWhere() {
 		q = q.Or(query, val...)
 	}
+	if len(f.GetOrWhereGroup()) > 0 {
+		orWhereGroup := r.GetDB(ctx)
+		for query, val := range f.GetOrWhereGroup() {
+			orWhereGroup.Where(query, val...)
+		}
+		q = q.Or(orWhereGroup)
+	}
 
 	for _, join := range f.GetJoins() {
 		q = q.Joins(join.Query, join.Args...)
@@ -150,6 +157,14 @@ func (r *BaseRepo) Search(ctx context.Context, val interface{}, f filter.Filter,
 
 	for query, val := range f.GetOrWhere() {
 		q = q.Or(query, val...)
+	}
+
+	if len(f.GetOrWhereGroup()) > 0 {
+		orWhereGroup := r.GetDB(ctx)
+		for query, val := range f.GetOrWhereGroup() {
+			orWhereGroup.Where(query, val...)
+		}
+		q = q.Or(orWhereGroup)
 	}
 
 	for _, join := range f.GetJoins() {
@@ -195,6 +210,14 @@ func (r *BaseRepo) SearchAndCount(ctx context.Context, val interface{}, f filter
 
 	for query, val := range f.GetOrWhere() {
 		q = q.Or(query, val...)
+	}
+
+	if len(f.GetOrWhereGroup()) > 0 {
+		orWhereGroup := r.GetDB(ctx)
+		for query, val := range f.GetOrWhereGroup() {
+			orWhereGroup.Where(query, val...)
+		}
+		q = q.Or(orWhereGroup)
 	}
 
 	for _, join := range f.GetJoins() {
@@ -342,6 +365,13 @@ func (r *BaseRepo) SearchWithPreloadConditionAndCount(ctx context.Context, val i
 	}
 	for query, args := range f.GetOrWhere() {
 		q = q.Or(query, args...)
+	}
+	if len(f.GetOrWhereGroup()) > 0 {
+		orWhereGroup := r.GetDB(ctx)
+		for query, val := range f.GetOrWhereGroup() {
+			orWhereGroup.Where(query, val...)
+		}
+		q = q.Or(orWhereGroup)
 	}
 	for _, join := range f.GetJoins() {
 		q = q.Joins(join.Query, join.Args...)
